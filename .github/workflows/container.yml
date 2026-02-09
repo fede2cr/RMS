@@ -2,6 +2,8 @@ name: Build and Publish Container Image
 
 on:
   push:
+    branches:
+      - '**'
 
 env:
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/rms
