@@ -64,8 +64,8 @@ COPY --chown=rms:rms . /home/rms/source/RMS
 
 # Set up Python virtual environment with system site-packages
 RUN python3 -m venv --system-site-packages /home/rms/vRMS
-ENV PATH="/home/rms/vRMS/bin:$PATH" \
-    VIRTUAL_ENV="/home/rms/vRMS"
+ENV PATH="/home/rms/vRMS/bin:${PATH}"
+ENV VIRTUAL_ENV="/home/rms/vRMS"
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
@@ -79,4 +79,5 @@ RUN mkdir -p /home/rms/RMS_data
 
 WORKDIR /home/rms/source/RMS
 
-CMD ["PATH=/home/rms/vRMS/bin:$PATH VIRTUAL_ENV=/home/rms/vRMS python -m RMS.StartCapture"]
+
+ENTRYPOINT ["python", "-m", "RMS.StartCapture"]
