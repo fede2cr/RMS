@@ -21,7 +21,7 @@
 #     -v ./.config:/home/rms/source/RMS/.config:Z \
 #     rms bash
 
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 ENV DEBIAN_FRONTEND=noninteractive \
     TZ=UTC \
