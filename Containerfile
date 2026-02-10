@@ -41,9 +41,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY requirements.txt /tmp/requirements.txt
 
-# Build all wheels into /tmp/wheels
+# Build all dependency wheels into /tmp/wheels
 RUN python3 -m pip wheel --no-cache-dir --wheel-dir /tmp/wheels \
         -r /tmp/requirements.txt
+
+# Install build-time dependencies so numpy/cython are available for RMS's setup.py
+RUN python3 -m pip install --no-cache-dir numpy cython setuptools wheel
 
 # Build a wheel for RMS itself
 COPY . /tmp/RMS
@@ -114,5 +117,5 @@ RUN mkdir -p /home/rms/RMS_data
 
 WORKDIR /home/rms/source/RMS
 
+# Default: interactive shell (override with e.g. "python -m RMS.StartCapture")
 ENTRYPOINT ["python", "-m", "RMS.StartCapture"]
-
