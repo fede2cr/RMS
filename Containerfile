@@ -24,7 +24,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 #  Stage 1: Builder — compile wheels for all Python dependencies
 # ═══════════════════════════════════════════════════════════════════════════════
-FROM debian:bookworm-slim AS builder
+FROM debian:trixie-slim
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8
