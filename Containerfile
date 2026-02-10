@@ -79,4 +79,4 @@ RUN mkdir -p /home/rms/RMS_data
 
 WORKDIR /home/rms/source/RMS
 
-CMD ["python -m RMS.StartCapture"]
+CMD ["PATH=/home/rms/vRMS/bin:$PATH VIRTUAL_ENV=/home/rms/vRMS python -m RMS.StartCapture"]
