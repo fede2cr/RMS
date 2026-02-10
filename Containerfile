@@ -32,7 +32,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Build-time system packages (compilers, headers, git for VCS deps)
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git ca-certificates \
-        python3 python3-dev python3-pip python3-venv \
+        python3 python3-dev python3-pip python3-venv python3-full \
         build-essential g++ gfortran \
         libopenblas-dev liblapack-dev \
         pkg-config \
