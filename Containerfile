@@ -54,11 +54,12 @@ RUN pip wheel --no-cache-dir --wheel-dir /tmp/wheels \
 # Install build-time dependencies so numpy/cython are available for RMS's setup.py
 RUN pip install --no-cache-dir numpy cython
 
-# Build a wheel for RMS itself
+# Build a wheel for RMS itself and compile extensions in-place
 COPY . /tmp/RMS
 RUN cd /tmp/RMS \
     && pip wheel --no-cache-dir --no-deps --no-build-isolation \
-        --wheel-dir /tmp/wheels .
+        --wheel-dir /tmp/wheels . \
+    && python setup.py build_ext --inplace
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  Stage 2: Runtime — minimal image with only runtime dependencies
@@ -117,6 +118,13 @@ COPY --from=builder --chown=rms:rms /tmp/wheels /tmp/wheels
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
     && pip install --no-cache-dir --no-deps /tmp/wheels/*.whl \
     && rm -rf /tmp/wheels
+
+# ── Copy compiled Cython/C++ extensions into source tree ─────────────────────
+COPY --from=builder --chown=rms:rms /tmp/RMS/RMS/Astrometry/*.so /home/rms/source/RMS/RMS/Astrometry/
+COPY --from=builder --chown=rms:rms /tmp/RMS/RMS/Routines/*.so /home/rms/source/RMS/RMS/Routines/
+COPY --from=builder --chown=rms:rms /tmp/RMS/RMS/*.so /home/rms/source/RMS/RMS/
+COPY --from=builder --chown=rms:rms /tmp/RMS/Utils/*.so /home/rms/source/RMS/Utils/
+COPY --from=builder --chown=rms:rms /tmp/RMS/*.so /home/rms/source/RMS/
 
 # ── Create data directory ───────────────────────────────────────────────────
 RUN mkdir -p /home/rms/RMS_data
