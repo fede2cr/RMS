@@ -42,16 +42,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt /tmp/requirements.txt
 
 # Build all dependency wheels into /tmp/wheels
-RUN python3 -m pip wheel --no-cache-dir --wheel-dir /tmp/wheels \
+RUN python3 -m pip wheel --no-cache-dir --break-system-packages --wheel-dir /tmp/wheels \
         -r /tmp/requirements.txt
 
 # Install build-time dependencies so numpy/cython are available for RMS's setup.py
-RUN python3 -m pip install --no-cache-dir numpy cython setuptools wheel
+RUN python3 -m pip install --no-cache-dir --break-system-packages numpy cython setuptools wheel
 
 # Build a wheel for RMS itself
 COPY . /tmp/RMS
 RUN cd /tmp/RMS \
-    && python3 -m pip wheel --no-cache-dir --no-deps --no-build-isolation \
+    && python3 -m pip wheel --no-cache-dir --break-system-packages --no-deps --no-build-isolation \
         --wheel-dir /tmp/wheels .
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -66,7 +66,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Runtime-only system packages (no compilers, no -dev headers)
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git wget zip ca-certificates \
-        python3 python3-pip python3-venv python3-tk python3-pil python3-full \
+        python3 python3-pip python3-venv python3-tk python3-pil \
         mplayer socat chrony \
         imagemagick ffmpeg \
         python3-gi python3-gi-cairo \
