@@ -32,7 +32,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Build-time system packages (compilers, headers, git for VCS deps)
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git ca-certificates \
-        python3 python3-dev python3-pip python3-venv python3-full \
+        python3 python3-dev python3-pip python3-venv \
         build-essential g++ gfortran \
         libopenblas-dev liblapack-dev \
         pkg-config \
@@ -66,7 +66,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # Runtime-only system packages (no compilers, no -dev headers)
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git wget zip ca-certificates \
-        python3 python3-pip python3-venv python3-tk python3-pil \
+        python3 python3-pip python3-venv python3-tk python3-pil python3-full \
         mplayer socat chrony \
         imagemagick ffmpeg \
         python3-gi python3-gi-cairo \
