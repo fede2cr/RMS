@@ -24,7 +24,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 #  Stage 1: Builder — compile wheels for all Python dependencies
 # ═══════════════════════════════════════════════════════════════════════════════
-FROM debian:trixie-slim
+FROM debian:trixie-slim AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=C.UTF-8
@@ -54,7 +54,7 @@ RUN cd /tmp/RMS \
 # ═══════════════════════════════════════════════════════════════════════════════
 #  Stage 2: Runtime — minimal image with only runtime dependencies
 # ═══════════════════════════════════════════════════════════════════════════════
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 ENV DEBIAN_FRONTEND=noninteractive \
     TZ=UTC \
