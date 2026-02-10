@@ -79,4 +79,4 @@ RUN mkdir -p /home/rms/RMS_data
 
 WORKDIR /home/rms/source/RMS
 
-CMD ["rms python -m RMS.StartCapture"]
+CMD ["python -m RMS.StartCapture"]
