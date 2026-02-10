@@ -27,7 +27,9 @@
 FROM debian:trixie-slim AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive \
-    LANG=C.UTF-8
+    LANG=C.UTF-8 \
+    VIRTUAL_ENV=/opt/build-venv \
+    PATH="/opt/build-venv/bin:$PATH"
 
 # Build-time system packages (compilers, headers, git for VCS deps)
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -39,19 +41,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Create a build venv so pip works without --break-system-packages
+RUN python3 -m venv $VIRTUAL_ENV \
+    && pip install --no-cache-dir --upgrade pip setuptools wheel
+
 COPY requirements.txt /tmp/requirements.txt
 
 # Build all dependency wheels into /tmp/wheels
-RUN python3 -m pip wheel --no-cache-dir --break-system-packages --wheel-dir /tmp/wheels \
+RUN pip wheel --no-cache-dir --wheel-dir /tmp/wheels \
         -r /tmp/requirements.txt
 
 # Install build-time dependencies so numpy/cython are available for RMS's setup.py
-RUN python3 -m pip install --no-cache-dir --break-system-packages numpy cython setuptools wheel
+RUN pip install --no-cache-dir numpy cython
 
 # Build a wheel for RMS itself
 COPY . /tmp/RMS
 RUN cd /tmp/RMS \
-    && python3 -m pip wheel --no-cache-dir --break-system-packages --no-deps --no-build-isolation \
+    && pip wheel --no-cache-dir --no-deps --no-build-isolation \
         --wheel-dir /tmp/wheels .
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -107,7 +113,7 @@ ENV PATH="/home/rms/vRMS/bin:$PATH" \
     VIRTUAL_ENV="/home/rms/vRMS"
 
 # ── Install pre-built wheels from builder stage ─────────────────────────────
-COPY --from=builder /tmp/wheels /tmp/wheels
+COPY --from=builder --chown=rms:rms /tmp/wheels /tmp/wheels
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
     && pip install --no-cache-dir --no-deps /tmp/wheels/*.whl \
     && rm -rf /tmp/wheels
